@@ -16,10 +16,13 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ElectronService } from './providers/electron.service';
 
 import { WebviewDirective } from './directives/webview.directive';
+import { FileDropModule } from 'ngx-file-drop';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule, MatCardModule } from '@angular/material';
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -32,17 +35,21 @@ export function HttpLoaderFactory(http: HttpClient) {
     WebviewDirective
   ],
   imports: [
+    MatProgressBarModule,
+    FileDropModule,
     BrowserModule,
     FormsModule,
     HttpClientModule,
     AppRoutingModule,
+    MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule, MatCardModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
         useFactory: (HttpLoaderFactory),
         deps: [HttpClient]
       }
-    })
+    }),
+    BrowserAnimationsModule
   ],
   providers: [ElectronService],
   bootstrap: [AppComponent]

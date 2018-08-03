@@ -1,5 +1,16 @@
+
 <div class="container">
   <h1 class="title">
-    {{ 'PAGES.HOME.TITLE' | translate }}
+    Stardew host swap
   </h1>
+  <div class="upload">
+    <file-drop headertext="Drag save file here" (onFileDrop)="dropped($event)" >
+      <!-- <span>optional content (don't set headertext then)</span> -->
+  </file-drop> <br/>
+  <mat-progress-bar [ngClass]="{hidden :!isLoading}" mode="buffer"></mat-progress-bar><br/>
+  
+  <strong>{{currentState}}</strong>
+  </div>
 </div>
+
+
