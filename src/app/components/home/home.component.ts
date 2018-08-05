@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UploadEvent, UploadFile } from 'ngx-file-drop';
+import { UploadEvent, UploadFile, FileSystemFileEntry } from 'ngx-file-drop';
 import * as convert from 'xml-js';
 import * as fileSaver from 'file-saver';
 @Component({
@@ -104,7 +104,7 @@ export class HomeComponent implements OnInit {
   getLocations(gameData: any) {
     return this.elementFilter(gameData.elements[0].elements, 'locations')[0];
   }
-  elementFilter(elements, name, xsiType) {
+  elementFilter(elements, name, xsiType?) {
     const filtered = elements.filter(element => {
       if (name && xsiType) {
         return element.name === name && element.attributes && element.attributes['xsi:type'] === xsiType;
