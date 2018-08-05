@@ -17,10 +17,17 @@
 
 }
 .upload {
+  margin-top: 40%;
   justify-content: center;
   display: flex;
   flex-direction: column;
   width: 50%;
+}
+.options {
+  margin-top: 40%;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
 }
 .hidden {
   display: none !important;

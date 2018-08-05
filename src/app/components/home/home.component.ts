@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UploadEvent, UploadFile } from 'ngx-file-drop';
 import * as convert from 'xml-js';
 import * as fileSaver from 'file-saver';
-import { SaveGame } from '../../types/api';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -10,6 +9,7 @@ import { SaveGame } from '../../types/api';
 })
 export class HomeComponent implements OnInit {
   public files: UploadFile[] = [];
+  fileName: string;
   saveGame: any;
   isLoading: boolean = false;
   currentState: string;
@@ -29,6 +29,7 @@ export class HomeComponent implements OnInit {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
         fileEntry.file((file: File) => {
           const reader = new FileReader();
+          this.fileName = file.name;
           reader.readAsText(file, 'UTF-8');
           reader.onload = function (evt) {
             this.currentState = 'uploaded successfully';
@@ -59,8 +60,8 @@ export class HomeComponent implements OnInit {
     player.elements = [selectedFarmHand.elements, selectedFarmHand.elements = player.elements][0];
     const xml = convert.json2xml(this.saveGame);
     console.log(xml);
-    const blob = new Blob([xml], {type: "text/xml;charset=utf-8"});
-    fileSaver.saveAs(blob, "test.txt");
+    const blob = new Blob([xml]);
+    fileSaver.saveAs(blob, this.fileName);
   }
   getPlayer(gameData: any) {
     const player = gameData.elements[0].elements.filter(element => {

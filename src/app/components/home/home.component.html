@@ -1,26 +1,26 @@
 
 <div class="container">
-  <h1 class="title">
-    Stardew host swap
-  </h1>
-  <div class="upload">
+  <div class="upload" [ngClass]="{hidden :farmHands}">
     <file-drop headertext="Drag save file here" (onFileDrop)="dropped($event)" >
       <!-- <span>optional content (don't set headertext then)</span> -->
   </file-drop> <br/>
   <mat-progress-bar [ngClass]="{hidden :!isLoading}" mode="buffer"></mat-progress-bar><br/>
   
   <strong>{{currentState}}</strong>
+ 
   </div>
-  <div class="upload" *ngIf='farmHands'>
-    Your current host is : {{currentHost}}
-    <mat-radio-group class="example-radio-group" [(ngModel)]="newHost">
-      <mat-radio-button class="example-radio-button" *ngFor="let farmHand of farmHandNames" [value]="farmHand">
-        {{farmHand}}
-      </mat-radio-button>
-    </mat-radio-group>
-    <div class="example-selected-value">Your new host is: {{newHost}}</div>
-    <button (click)="saveChanges()">Save</button>
-  </div>
+  <div class="options" *ngIf='farmHands'>
+      Your current host is : {{currentHost}}
+      <mat-radio-group class="example-radio-group" [(ngModel)]="newHost">
+        <mat-radio-button class="example-radio-button" color="primary"  *ngFor="let farmHand of farmHandNames" [value]="farmHand">
+          {{farmHand}}
+        </mat-radio-button>
+      </mat-radio-group>
+      <div class="example-selected-value">Your new host is: {{newHost}}</div>
+      <button [ngClass]="{hidden :!newHost}" mat-raised-button color="primary" (click)="saveChanges()">Save<mat-icon>save</mat-icon>
+      </button>
+    </div>
 </div>
+
 
 
