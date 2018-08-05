@@ -59,7 +59,6 @@ export class HomeComponent implements OnInit {
     const player = this.getPlayer(this.saveGame);
     player.elements = [selectedFarmHand.elements, selectedFarmHand.elements = player.elements][0];
     const xml = convert.json2xml(this.saveGame);
-    console.log(xml);
     const blob = new Blob([xml]);
     fileSaver.saveAs(blob, this.fileName);
   }
@@ -83,14 +82,15 @@ export class HomeComponent implements OnInit {
     const indoors = this.getIndoors(gameData);
     const farmHands = indoors.map(indoor => {
       return this.elementFilter(indoor.elements, 'farmhand')[0];
-    });
+    }).filter(farmhand => farmhand);
     return farmHands;
   }
+
   getIndoors(gameData: any) {
     const buildings = this.getBuildings(gameData);
     const indoors = buildings.elements.map(building => {
       return this.elementFilter(building.elements, 'indoors')[0];
-    });
+    }).filter(indoor => indoor);
     return indoors;
   }
   getBuildings(gameData: any) {
