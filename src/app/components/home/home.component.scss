@@ -5,7 +5,7 @@
   justify-content: center;
   flex-direction: column;
 
-  background: url(../../../assets/background.jpg) no-repeat center fixed;
+  background: url(../../../assets/stardew-valley-hd-wallpapers-33695-3933387.jpg) no-repeat center fixed;
   -webkit-background-size: cover; /* pour anciens Chrome et Safari */
   background-size: cover; /* version standardisée */
 
@@ -24,4 +24,16 @@
 }
 .hidden {
   display: none !important;
+}
+.example-radio-group {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.example-radio-button {
+  margin: 5px;
+}
+
+.example-selected-value {
+  margin: 15px 0;
 }

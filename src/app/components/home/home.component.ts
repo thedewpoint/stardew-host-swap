@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { UploadEvent, UploadFile } from 'ngx-file-drop';
 import * as convert from 'xml-js';
+import * as fileSaver from 'file-saver';
+import { SaveGame } from '../../types/api';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -8,57 +10,109 @@ import * as convert from 'xml-js';
 })
 export class HomeComponent implements OnInit {
   public files: UploadFile[] = [];
+  saveGame: any;
   isLoading: boolean = false;
   currentState: string;
-  constructor() { }
-
-  ngOnInit() {
-  }
+  newHost: string;
+  farmHands: any[];
+  farmHandNames: string[];
+  currentHost: string;
+  player: any;
+  constructor() {}
+  ngOnInit() {}
   public dropped(event: UploadEvent) {
-    this.currentState = "receiving upload";
+    this.currentState = 'receiving upload';
     this.isLoading = true;
     this.files = event.files;
-
     for (const droppedFile of event.files) {
- 
-      // Is it a file?
       if (droppedFile.fileEntry.isFile) {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
         fileEntry.file((file: File) => {
- 
-          // Here you can access the real file
           const reader = new FileReader();
-          reader.readAsText(file, "UTF-8");
+          reader.readAsText(file, 'UTF-8');
           reader.onload = function (evt) {
             this.currentState = 'uploaded successfully';
-            console.log('file reader success');
-            try{
+            try {
               this.currentState = 'parsing save file...';
-            const result = JSON.parse(convert.xml2json(evt.target.result, {compact: false, spaces: 4}));
+              this.saveGame = JSON.parse(convert.xml2json(evt.target.result, {compact: false, spaces: 4}));
               this.currentState = 'parsed successfully';
               this.isLoading = false;
-              console.log(result);
-              const host = result.elements.filter(element => {
-                return element.name === 'player';
-              });
-              console.log(host);
-            } catch(e) {
+              this.player = this.getPlayer(this.saveGame);
+              this.currentHost = this.getFarmHandNames([this.player])[0];
+              this.farmHands = this.getFarmHands(this.saveGame);
+              this.farmHandNames = this.getFarmHandNames(this.farmHands);
+            } catch (e) {
               console.log(e);
-
             }
-            // const json = JSON.parse(evt.target.result);
-            // that.update(json.seeds[0]);
         }.bind(this);
-
-          // console.log(droppedFile.relativePath, file);
         });
-      } else {
-        // It was a directory (empty directories are added, otherwise only files)
-        const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
-        console.log(droppedFile.relativePath, fileEntry);
       }
     }
   }
 
+  saveChanges() {
+    const selectedFarmHand = this.farmHands.find(farmHand => {
+      const nameNode = this.elementFilter(farmHand.elements, 'name')[0];
+      return nameNode.elements[0].text === this.newHost;
+    });
+    const player = this.getPlayer(this.saveGame);
+    player.elements = [selectedFarmHand.elements, selectedFarmHand.elements = player.elements][0];
+    const xml = convert.json2xml(this.saveGame);
+    console.log(xml);
+    const blob = new Blob([xml], {type: "text/xml;charset=utf-8"});
+    fileSaver.saveAs(blob, "test.txt");
+  }
+  getPlayer(gameData: any) {
+    const player = gameData.elements[0].elements.filter(element => {
+      return element.name === 'player';
+    });
+    return player[0];
+  }
+  getFarmHandNames(farmHands: any[]) {
+    const names = farmHands.filter(farmHand => {
+      const nameNode = this.elementFilter(farmHand.elements, 'name')[0];
+        return nameNode.elements;
+    }).map(farmHand => {
+      const nameNode = this.elementFilter(farmHand.elements, 'name')[0];
+      return nameNode.elements[0].text;
+    });
+    return names;
+  }
+  getFarmHands(gameData: any) {
+    const indoors = this.getIndoors(gameData);
+    const farmHands = indoors.map(indoor => {
+      return this.elementFilter(indoor.elements, 'farmhand')[0];
+    });
+    return farmHands;
+  }
+  getIndoors(gameData: any) {
+    const buildings = this.getBuildings(gameData);
+    const indoors = buildings.elements.map(building => {
+      return this.elementFilter(building.elements, 'indoors')[0];
+    });
+    return indoors;
+  }
+  getBuildings(gameData: any) {
+    const farmLocation = this.getFarmLocation(gameData);
+    return this.elementFilter(farmLocation.elements, 'buildings')[0];
+  }
+  getFarmLocation(gameData: any) {
+   const locations = this.getLocations(gameData);
+   return this.elementFilter(locations.elements, 'GameLocation', 'Farm')[0];
+  }
+  getLocations(gameData: any) {
+    return this.elementFilter(gameData.elements[0].elements, 'locations')[0];
+  }
+  elementFilter(elements, name, xsiType) {
+    const filtered = elements.filter(element => {
+      if (name && xsiType) {
+        return element.name === name && element.attributes && element.attributes['xsi:type'] === xsiType;
+      }
+      if (name) {
+        return element.name === name;
+      }
+    });
+    return filtered;
+  }
 
 }

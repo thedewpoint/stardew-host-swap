@@ -18,7 +18,7 @@ import { ElectronService } from './providers/electron.service';
 import { WebviewDirective } from './directives/webview.directive';
 import { FileDropModule } from 'ngx-file-drop';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
-
+import {MatRadioModule} from '@angular/material/radio';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -35,6 +35,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     WebviewDirective
   ],
   imports: [
+    MatRadioModule,
     MatProgressBarModule,
     FileDropModule,
     BrowserModule,
